@@ -8,10 +8,12 @@ interface Props {
 interface DefaultContextInterface {
   darkmode: boolean;
   setDarkmode: (darkmode: boolean) => void;
-  username: string;
+/*   username: string;
   setUsername: (username: string) => void;
   password: string;
-  setPassword: (password: string) => void;
+  setPassword: (password: string) => void; */
+  basicAuth: string;
+  setBasicAuth: (basicAuth: string) => void;
 }
 
 // Create context
@@ -22,18 +24,21 @@ export const DefaultContext = createContext<DefaultContextInterface | null>(
 // Export provider
 export function DefaultProvider({ children }: Props) {
   const [darkmode, setDarkmode] = useState<boolean>(true);
-  const [username, setUsername] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
+/*   const [username, setUsername] = useState<string>("");
+  const [password, setPassword] = useState<string>(""); */
+  const [basicAuth, setBasicAuth] = useState<string>("");
 
   return (
     <DefaultContext.Provider
       value={{
         darkmode,
         setDarkmode,
-        username,
+/*         username,
         setUsername,
         password,
-        setPassword,
+        setPassword, */
+        basicAuth, 
+        setBasicAuth
       }}
     >
       {children}
