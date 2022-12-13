@@ -1,56 +1,40 @@
-import axios, { AxiosResponse } from "axios";
-import React, { useState } from "react";
-import Form from "react-bootstrap/Form";
-import InputGroup from "react-bootstrap/InputGroup";
-import Button from "react-bootstrap/Button"
+import axios from "axios";
+import React from "react";
+import LoginModal from "../components/LoginModal";
 import { useDefaultProvider } from "../contexts/default";
 
 function Login() {
-
-  interface User {
-    Authorization: string;
-  }
-
-  const { setBasicAuth } = useDefaultProvider();
-  const [username, setUsername] = useState("")
-  const [password, setPassword] = useState("")
+  const { username, setUsername, password, setPassword, setLoggedIn } =
+    useDefaultProvider();
 
   const handleLogin = () => {
-    console.log(username)
-    console.log(password)
     axios
-      .get<User[]>(process.env.REACT_APP_BACKEND_URL + "/v2/", {
+      .get(process.env.REACT_APP_BACKEND_URL + "/v2/", {
         auth: {
           username: username,
           password: password,
         },
       })
       .then((res) => {
-        console.log(res.config.headers?.Authorization)
-        setBasicAuth(res.config.headers?.Authorization)
+        console.log("Login ok " + res);
+        setLoggedIn(true);
+      })
+      .catch((res) => {
+        console.log("fail " + res);
+        setLoggedIn(false);
       });
-  }
+  };
 
   return (
-  <div>
-    <InputGroup className="mb-3">
-              <Form.Control
-                autoComplete="off"
-                /* spellCheck="off" */
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-              />
-    </InputGroup>
-    <InputGroup className="mb-3">
-              <Form.Control
-                autoComplete="off"
-                /* spellCheck="off" */
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-    </InputGroup>
-    <Button onClick={handleLogin}>Submit</Button>
-  </div>
+    <div>
+      <LoginModal
+        password={password}
+        setPassword={setPassword}
+        username={username}
+        setUsername={setUsername}
+        handleLogin={handleLogin}
+      />
+    </div>
   );
 }
 
