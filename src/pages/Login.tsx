@@ -1,10 +1,13 @@
 import axios from "axios";
-import React from "react";
+import React, { useState } from "react";
 import LoginModal from "../components/LoginModal";
+import { useNavigate } from "react-router-dom";
 import { useDefaultProvider } from "../contexts/default";
 
 function Login() {
-  const { username, setUsername, password, setPassword, setLoggedIn } =
+  const navigate = useNavigate();
+  const [show, setShow] = useState<boolean>(false);
+  const { username, setUsername, password, setPassword } =
     useDefaultProvider();
 
   const handleLogin = () => {
@@ -15,13 +18,18 @@ function Login() {
           password: password,
         },
       })
-      .then((res) => {
-        console.log("Login ok " + res);
-        setLoggedIn(true);
+      .then(() => {
+        console.log("Login ok");
+        localStorage.setItem("username", username);
+        localStorage.setItem("password", password);
+        navigate("/");
       })
-      .catch((res) => {
-        console.log("fail " + res);
-        setLoggedIn(false);
+      .catch(() => {
+        console.log("Login fail");
+        setShow(true);
+        setTimeout(() => {
+          setShow(false);
+        }, 3000);
       });
   };
 
@@ -33,6 +41,7 @@ function Login() {
         username={username}
         setUsername={setUsername}
         handleLogin={handleLogin}
+        show={show}
       />
     </div>
   );

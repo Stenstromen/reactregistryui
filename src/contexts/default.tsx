@@ -14,8 +14,8 @@ interface DefaultContextInterface {
   setPassword: (password: string) => void;
   basicAuth: string;
   setBasicAuth: (basicAuth: string) => void;
-  loggedIn: boolean;
-  setLoggedIn: (loggedIn: boolean) => void;
+  tag: string;
+  setTag: (tag: string) => void;
 }
 
 // Create context
@@ -26,10 +26,14 @@ export const DefaultContext = createContext<DefaultContextInterface | null>(
 // Export provider
 export function DefaultProvider({ children }: Props) {
   const [darkmode, setDarkmode] = useState<boolean>(true);
-  const [username, setUsername] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
+  const [username, setUsername] = useState<string>(
+    localStorage.getItem("username") || ""
+  );
+  const [password, setPassword] = useState<string>(
+    localStorage.getItem("password") || ""
+  );
   const [basicAuth, setBasicAuth] = useState<string>("");
-  const [loggedIn, setLoggedIn] = useState<boolean>(false)
+  const [tag, setTag] = useState<string>("");
 
   return (
     <DefaultContext.Provider
@@ -40,10 +44,10 @@ export function DefaultProvider({ children }: Props) {
         setUsername,
         password,
         setPassword,
-        basicAuth, 
+        basicAuth,
         setBasicAuth,
-        loggedIn,
-        setLoggedIn,
+        tag,
+        setTag,
       }}
     >
       {children}

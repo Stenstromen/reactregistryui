@@ -3,6 +3,7 @@ import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
 import PropTypes from "prop-types";
+import LoginFail from "./LoginFail";
 
 interface LoginModal {
   password: string;
@@ -10,6 +11,7 @@ interface LoginModal {
   username: string;
   setUsername: (username: string) => void;
   handleLogin: (params: unknown) => unknown;
+  show: boolean;
 }
 
 function LoginModal({
@@ -18,11 +20,11 @@ function LoginModal({
   username,
   setUsername,
   handleLogin,
+  show,
 }: LoginModal) {
   return (
     <div>
       <Modal
-        /*  {...props} */
         size="lg"
         aria-labelledby="contained-modal-title-vcenter"
         centered
@@ -54,6 +56,7 @@ function LoginModal({
           </Form.Group>
           <Button onClick={handleLogin}>Login</Button>
         </Modal.Body>
+        <LoginFail show={show} />
       </Modal>
     </div>
   );
@@ -64,6 +67,8 @@ LoginModal.propTypes = {
   setPassword: PropTypes.func.isRequired,
   username: PropTypes.string.isRequired,
   setUsername: PropTypes.func.isRequired,
+  handleLogin: PropTypes.func.isRequired,
+  show: PropTypes.bool.isRequired,
 };
 
 export default LoginModal;
