@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Header from "../components/Header";
+import Breadcrumbs from "../components/Breadcrumbs";
 import ViewRepositories from "../components/ViewRepositories";
 import { useDefaultProvider } from "../contexts/default";
 
@@ -40,6 +41,7 @@ function Home() {
       }}
     >
       <Header title="Repositories" />
+      <Breadcrumbs current="Home" prev={[]}/>
       <ViewRepositories repositories={repositories} setTag={setTag} />
     </div>
   );
