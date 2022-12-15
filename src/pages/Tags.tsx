@@ -11,24 +11,57 @@ function Tags() {
   const [repoName, setRepoName] = useState<string>("");
   const [tags, setTags] = useState<string[]>([]);
   const [dates, setDates] = useState<string[]>([]);
+  const [sizes, setSizes] = useState<string[]>([])
 
-  const getDate = async (item:string) => {
+  const getDate = async (item: string) => {
     return await axios
-    .get(process.env.REACT_APP_BACKEND_URL + `/v2/${tag}/manifests/${item}`, {
-      auth: {
-        username: username,
-        password: password,
-      },
-    })
-    .then((res) => {
-      /* setRepoName(res.data.name);
-      setTags(res.data.tags); */
-      console.log(JSON.parse(res.data.history[0].v1Compatibility).created);
-      setDates(dates => [...dates, JSON.parse(res.data.history[0].v1Compatibility).created])
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+      .get(process.env.REACT_APP_BACKEND_URL + `/v2/${tag}/manifests/${item}`, {
+        auth: {
+          username: username,
+          password: password,
+        },
+      })
+      .then((res) => {
+        setDates((dates) => [
+          ...dates,
+          JSON.parse(res.data.history[0].v1Compatibility).created,
+        ]);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  const getSize = async (item: string) => {
+    return await axios
+      .get(process.env.REACT_APP_BACKEND_URL + `/v2/${tag}/manifests/${item}`, {
+        auth: {
+          username: username,
+          password: password,
+        },
+        headers: {
+          Accept: "application/vnd.docker.distribution.manifest.v2+json"
+        },
+      })
+      .then((res) => {
+        /* setDates((dates) => [
+          ...dates,
+          JSON.parse(res.data.history[0].v1Compatibility).created,
+        ]); */
+        //console.log(res.data.config.size)
+        // eslint-disable-next-line prefer-const
+        let sizes = res.data.config.size;
+        //console.log(res.data.layers)
+        res.data.layers.forEach((item: { size: number; }) => {
+          //console.log(item.size)
+          sizes =+ item.size
+        });
+
+        console.log(sizes)
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }
 
   useEffect(() => {
@@ -42,14 +75,18 @@ function Tags() {
       .then((res) => {
         setRepoName(res.data.name);
         setTags(res.data.tags);
-        res.data.tags.forEach((item: string) => {
-            getDate(item)
-        });
       })
       .catch((err) => {
         console.log(err);
       });
   }, []);
+
+  useEffect(() => {
+    return tags.forEach((item: string) => {
+      getDate(item);
+      getSize(item);
+    });
+  }, [tags]);
 
   return (
     <div
