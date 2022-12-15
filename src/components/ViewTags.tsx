@@ -6,22 +6,24 @@ import { VscCopy } from "react-icons/vsc";
 interface ViewTags {
   name: string;
   tags: string[];
+  dates: string[];
 }
 
-function ViewTags({ name, tags }: ViewTags) {
+function ViewTags({ tags, dates }: ViewTags) {
   return (
     <>
       <Table striped bordered hover>
         <thead>
           <tr>
+            <th>Date</th>
             <th>Tag</th>
-            <th></th>
           </tr>
         </thead>
         <tbody>
-          {tags.map((tag) => {
+          {tags.map((tag, index) => {
             return (
-              <tr key={tag}>
+              <tr key={index}>
+                <td>{dates[index]}</td>
                 <td>{tag}</td>
                 <td>
                   <a

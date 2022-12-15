@@ -10,6 +10,26 @@ function Tags() {
   const { username, password, tag, setTag } = useDefaultProvider();
   const [repoName, setRepoName] = useState<string>("");
   const [tags, setTags] = useState<string[]>([]);
+  const [dates, setDates] = useState<string[]>([]);
+
+  const getDate = async (item:string) => {
+    return await axios
+    .get(process.env.REACT_APP_BACKEND_URL + `/v2/${tag}/manifests/${item}`, {
+      auth: {
+        username: username,
+        password: password,
+      },
+    })
+    .then((res) => {
+      /* setRepoName(res.data.name);
+      setTags(res.data.tags); */
+      console.log(JSON.parse(res.data.history[0].v1Compatibility).created);
+      setDates(dates => [...dates, JSON.parse(res.data.history[0].v1Compatibility).created])
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+  }
 
   useEffect(() => {
     axios
@@ -22,6 +42,9 @@ function Tags() {
       .then((res) => {
         setRepoName(res.data.name);
         setTags(res.data.tags);
+        res.data.tags.forEach((item: string) => {
+            getDate(item)
+        });
       })
       .catch((err) => {
         console.log(err);
@@ -38,7 +61,6 @@ function Tags() {
       }}
     >
       <Header title={repoName} />
-      {/* <Breadcrumbs current={repoName} prev={previous} /> */}
       <Breadcrumb
         style={{
           width: "100%",
@@ -52,7 +74,7 @@ function Tags() {
         </Breadcrumb.Item>{" "}
         <Breadcrumb.Item active>{repoName}</Breadcrumb.Item>
       </Breadcrumb>
-      <ViewTags name={repoName} tags={tags} />
+      <ViewTags name={repoName} tags={tags} dates={dates} />
     </div>
   );
 }
