@@ -1,3 +1,11 @@
+:root {    
+  --bs-body-color: "lightgrey";
+}
+body {    
+  /* background-color: var(--bs-body-color); */
+  background-color: black;
+}
+
 .App {
   text-align: center;
 }

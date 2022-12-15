@@ -2,7 +2,8 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Header from "../components/Header";
-import Breadcrumbs from "../components/Breadcrumbs";
+//import Breadcrumbs from "../components/Breadcrumbs";
+import Breadcrumb from "react-bootstrap/Breadcrumb";
 import ViewRepositories from "../components/ViewRepositories";
 import { useDefaultProvider } from "../contexts/default";
 
@@ -41,7 +42,15 @@ function Home() {
       }}
     >
       <Header title="Repositories" />
-      <Breadcrumbs current="Home" prev={[]}/>
+      {/* <Breadcrumbs current="Home" prev={}/> */}
+      <Breadcrumb
+        style={{
+          width: "100%",
+          alignSelf: "flex-start",
+        }}
+      >
+        <Breadcrumb.Item>Home</Breadcrumb.Item>
+      </Breadcrumb>
       <ViewRepositories repositories={repositories} setTag={setTag} />
     </div>
   );

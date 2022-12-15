@@ -19,7 +19,14 @@ function App() {
   }, []);
 
   return (
-    <div style={{display: "flex", justifyContent: "center"}}>
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "center",
+        backgroundColor: "lightgrey",
+        flexGrow: "1",
+      }}
+    >
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />

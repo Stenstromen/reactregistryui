@@ -25,7 +25,7 @@ function ViewRepositories({ repositories, setTag }: ViewRepositories) {
                   <a onClick={() => setTag(item)}>
                     <VscGoToFile size={20} />
                   </a>
-                  &nbsp;&nbsp;&nbsp;{item}
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{item}
                 </td>
               </tr>
             );
