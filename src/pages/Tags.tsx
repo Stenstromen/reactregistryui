@@ -11,7 +11,8 @@ function Tags() {
   const [repoName, setRepoName] = useState<string>("");
   const [tags, setTags] = useState<string[]>([]);
   const [dates, setDates] = useState<string[]>([]);
-  const [sizes, setSizes] = useState<string[]>([])
+  const [sizes, setSizes] = useState<number[]>([]);
+  const [digests, setDigests] = useState<string[]>([]);
 
   const getDate = async (item: string) => {
     return await axios
@@ -33,6 +34,7 @@ function Tags() {
   };
 
   const getSize = async (item: string) => {
+    let size: number;
     return await axios
       .get(process.env.REACT_APP_BACKEND_URL + `/v2/${tag}/manifests/${item}`, {
         auth: {
@@ -40,24 +42,41 @@ function Tags() {
           password: password,
         },
         headers: {
-          Accept: "application/vnd.docker.distribution.manifest.v2+json"
+          Accept: "application/vnd.docker.distribution.manifest.v2+json",
         },
       })
       .then((res) => {
-        /* setDates((dates) => [
-          ...dates,
-          JSON.parse(res.data.history[0].v1Compatibility).created,
-        ]); */
-        //console.log(res.data.config.size)
-        // eslint-disable-next-line prefer-const
-        let sizes = res.data.config.size;
-        //console.log(res.data.layers)
-        res.data.layers.forEach((item: { size: number; }) => {
-          //console.log(item.size)
-          sizes =+ item.size
+        size = res.data.config.size;
+        res.data.layers.forEach((item: { size: number }) => {
+          size += item.size;
         });
+        setSizes((sizes) => [...sizes, Math.round(size / 1024 / 1024)]);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
 
-        console.log(sizes)
+  const getDigest = async (item: string) => {
+    let digest: string;
+    return await axios
+      .get(process.env.REACT_APP_BACKEND_URL + `/v2/${tag}/manifests/${item}`, {
+        auth: {
+          username: username,
+          password: password,
+        },
+        headers: {
+          Accept: "application/vnd.docker.distribution.manifest.v2+json",
+        },
+      })
+      .then((res) => {
+        console.log(res.data.config.digest)
+        setDigests((digests => [...digests, res.data.config.digest]))
+    /*     size = res.data.config.size;
+        res.data.layers.forEach((item: { size: number }) => {
+          size += item.size;
+        });
+        setSizes((sizes) => [...sizes, Math.round(size / 1024 / 1024)]); */
       })
       .catch((err) => {
         console.log(err);
@@ -85,6 +104,7 @@ function Tags() {
     return tags.forEach((item: string) => {
       getDate(item);
       getSize(item);
+      getDigest(item);
     });
   }, [tags]);
 
@@ -111,7 +131,7 @@ function Tags() {
         </Breadcrumb.Item>{" "}
         <Breadcrumb.Item active>{repoName}</Breadcrumb.Item>
       </Breadcrumb>
-      <ViewTags name={repoName} tags={tags} dates={dates} />
+      <ViewTags name={repoName} tags={tags} dates={dates} sizes={sizes} digests={digests}/>
     </div>
   );
 }

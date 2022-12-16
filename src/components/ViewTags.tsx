@@ -7,15 +7,19 @@ interface ViewTags {
   name: string;
   tags: string[];
   dates: string[];
+  sizes: number[];
+  digests: string[];
 }
 
-function ViewTags({ tags, dates }: ViewTags) {
+function ViewTags({ tags, dates, sizes, digests }: ViewTags) {
   return (
     <>
       <Table striped bordered hover>
         <thead>
           <tr>
             <th>Date</th>
+            <th>Size</th>
+            <th>Content Digest</th>
             <th>Tag</th>
           </tr>
         </thead>
@@ -24,6 +28,8 @@ function ViewTags({ tags, dates }: ViewTags) {
             return (
               <tr key={index}>
                 <td>{dates[index]}</td>
+                <td>{sizes[index]} MB</td>
+                <td>{digests[index]}</td>
                 <td>{tag}</td>
                 <td>
                   <a
