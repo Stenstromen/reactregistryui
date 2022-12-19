@@ -9,9 +9,10 @@ interface ViewTags {
   dates: string[];
   sizes: number[];
   digests: string[];
+  deleteTag: (item: string) => void;
 }
 
-function ViewTags({ tags, dates, sizes, digests }: ViewTags) {
+function ViewTags({ tags, dates, sizes, digests, deleteTag }: ViewTags) {
   return (
     <>
       <Table striped bordered hover>
@@ -21,6 +22,7 @@ function ViewTags({ tags, dates, sizes, digests }: ViewTags) {
             <th>Size</th>
             <th>Content Digest</th>
             <th>Tag</th>
+            <th>Delete</th>
           </tr>
         </thead>
         <tbody>
@@ -40,6 +42,7 @@ function ViewTags({ tags, dates, sizes, digests }: ViewTags) {
                     <VscCopy size={20} />
                   </a>
                 </td>
+                <td><a onClick={() => { deleteTag(tag) }}>Delete</a></td>
               </tr>
             );
           })}

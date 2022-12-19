@@ -8,6 +8,7 @@ import { useDefaultProvider } from "../contexts/default";
 
 function Tags() {
   const { username, password, tag, setTag } = useDefaultProvider();
+  const [render, setRender] = useState<string>("");
   const [repoName, setRepoName] = useState<string>("");
   const [tags, setTags] = useState<string[]>([]);
   const [dates, setDates] = useState<string[]>([]);
@@ -58,7 +59,6 @@ function Tags() {
   };
 
   const getDigest = async (item: string) => {
-    let digest: string;
     return await axios
       .get(process.env.REACT_APP_BACKEND_URL + `/v2/${tag}/manifests/${item}`, {
         auth: {
@@ -70,20 +70,61 @@ function Tags() {
         },
       })
       .then((res) => {
-        console.log(res.data.config.digest)
-        setDigests((digests => [...digests, res.data.config.digest]))
-    /*     size = res.data.config.size;
-        res.data.layers.forEach((item: { size: number }) => {
-          size += item.size;
-        });
-        setSizes((sizes) => [...sizes, Math.round(size / 1024 / 1024)]); */
+        setDigests((digests) => [...digests, res.data.config.digest]);
       })
       .catch((err) => {
         console.log(err);
       });
+  };
+
+  const deleteTagStep2 = (item: string) => {
+    console.log("deleteing step2... ");
+    axios
+    .delete(
+      process.env.REACT_APP_BACKEND_URL +
+        `/v2/${tag}/manifests/${item}`,
+      {
+        auth: {
+          username: username,
+          password: password,
+        },
+        headers: {
+          Accept: "application/vnd.docker.distribution.manifest.v2+json",
+        },
+      }
+    )
+    .then((res) => {
+      console.log(res);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+  return setRender(item);
   }
 
+  const deleteTag = (item: string) => {
+    console.log("deleteing... ");
+    return axios
+      .get(process.env.REACT_APP_BACKEND_URL + `/v2/${tag}/manifests/${item}`, {
+        auth: {
+          username: username,
+          password: password,
+        },
+        headers: {
+          Accept: "application/vnd.docker.distribution.manifest.v2+json",
+        },
+      })
+      .then((res) => {
+        console.log(res.data.config.digest);
+        deleteTagStep2(res.data.config.digest)
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
   useEffect(() => {
+    console.log("fetching");
     axios
       .get(process.env.REACT_APP_BACKEND_URL + `/v2/${tag}/tags/list`, {
         auth: {
@@ -98,7 +139,7 @@ function Tags() {
       .catch((err) => {
         console.log(err);
       });
-  }, []);
+  }, [render]);
 
   useEffect(() => {
     return tags.forEach((item: string) => {
@@ -131,7 +172,14 @@ function Tags() {
         </Breadcrumb.Item>{" "}
         <Breadcrumb.Item active>{repoName}</Breadcrumb.Item>
       </Breadcrumb>
-      <ViewTags name={repoName} tags={tags} dates={dates} sizes={sizes} digests={digests}/>
+      <ViewTags
+        name={repoName}
+        tags={tags}
+        dates={dates}
+        sizes={sizes}
+        digests={digests}
+        deleteTag={deleteTag}
+      />
     </div>
   );
 }
